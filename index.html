@@ -1,136 +1,1140 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Anessa vs Mama</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>안네사 vs 마마</title>
+    <style>
+        /* ===== 기본 스타일 리셋 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f7ff;
-  text-align: center;
-  padding: 20px;
-}
-h1 { color: #333; }
+        body {
+            font-family: 'Nanum Gothic', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFCCE5 50%, #E5CCFF 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
 
-.players {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin: 20px 0;
-}
+        .game-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-.player {
-  background: white;
-  padding: 10px;
-  border-radius: 15px;
-  width: 140px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
+        .screen {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+        }
 
-.player img {
-  width: 100%;
-  border-radius: 10px;
-}
+        .screen.active {
+            display: flex;
+        }
 
-.score {
-  font-size: 20px;
-  font-weight: bold;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.question {
-  font-size: 22px;
-  margin: 20px 0;
-}
+        .main-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #FF6B9D;
+            text-shadow: 3px 3px 0px #FFF, 5px 5px 10px rgba(0,0,0,0.2);
+            margin-bottom: 8px;
+            letter-spacing: -2px;
+        }
 
-button {
-  padding: 12px 20px;
-  margin: 10px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
+        .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 24px;
+        }
 
-.correct { background: #4CAF50; color: white; }
-.wrong { background: #f44336; color: white; }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+        }
 
-.explanation {
-  margin-top: 15px;
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-}
-</style>
+        .btn {
+            width: 100%;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8E53 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-option {
+            background: #F0F4FF;
+            color: #333;
+            border: 3px solid #E0E8FF;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .btn-option:hover {
+            background: #E0E8FF;
+            border-color: #667EEA;
+        }
+
+        .btn-option.correct {
+            background: #D4EDDA;
+            border-color: #28A745;
+            color: #155724;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .btn-option.wrong {
+            background: #F8D7DA;
+            border-color: #DC3545;
+            color: #721C24;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .players-status {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .player-box {
+            flex: 1;
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            border: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .player-box.active {
+            border-color: #FF6B9D;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
+        }
+
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFE5B4, #FFCCE5);
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .player-name {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .player-score {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #FF6B9D;
+        }
+
+        .turn-indicator {
+            background: linear-gradient(90deg, #667EEA, #764BA2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 16px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .question-area {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #E3F2FD;
+            color: #1976D2;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .difficulty-tag {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .difficulty-easy { background: #E8F5E9; color: #2E7D32; }
+        .difficulty-normal { background: #FFF3E0; color: #EF6C00; }
+        .difficulty-hard { background: #FFEBEE; color: #C62828; }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .question-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .explanation-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 16px;
+            display: none;
+            border-left: 5px solid #2196F3;
+        }
+
+        .explanation-box.show {
+            display: block;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-title {
+            color: #1976D2;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .explanation-text {
+            color: #333;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .voice-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-btn.off {
+            opacity: 0.5;
+        }
+
+        .result-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 24px;
+        }
+
+        .winner-display {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFCCE5 100%);
+            border-radius: 24px;
+            margin-bottom: 24px;
+        }
+
+        .winner-emoji {
+            font-size: 5rem;
+            margin-bottom: 16px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .winner-text {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #FF6B9D;
+            margin-bottom: 8px;
+        }
+
+        .final-scores {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 24px;
+        }
+
+        .final-score-box {
+            text-align: center;
+        }
+
+        .final-score-label {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .final-score-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E0E0E0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B9D, #FF8E53);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .select-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .select-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .select-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .select-card.selected {
+            border-color: #FF6B9D;
+            background: #FFF0F5;
+        }
+
+        .select-emoji {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .select-label {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .next-btn {
+            margin-top: 16px;
+            display: none;
+        }
+
+        .next-btn.show {
+            display: block;
+        }
+
+        @media (max-width: 380px) {
+            .main-title { font-size: 2rem; }
+            .question-text { font-size: 1.1rem; }
+            .btn { font-size: 1rem; padding: 16px 20px; }
+        }
+    </style>
 </head>
-
 <body>
+    <div class="game-container">
+        <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔊</button>
 
-<h1>🎮 Anessa vs Mama</h1>
+        <!-- 시작 화면 -->
+        <div class="screen active" id="startScreen">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <h1 class="main-title">🎮 안네사 vs 마마</h1>
+                <p class="subtitle">함께 풀고 함께 자라요!</p>
+                
+                <div class="card" style="text-align: center; padding: 40px 24px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">👧👩</div>
+                    <p style="font-size: 1.1rem; color: #666; line-height: 1.8; margin-bottom: 24px;">
+                        안네사와 마마가 번갈아 가며<br>
+                        퀴즈를 풀어요!<br>
+                        누가 더 많이 맞출까요?
+                    </p>
+                    <button class="btn btn-primary" onclick="showScreen('difficultyScreen')">
+                        🚀 게임 시작하기
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<div class="players">
-  <div class="player">
-    <img src="anessa.jpg" alt="Anessa">
-    <p>Anessa</p>
-    <p class="score" id="scoreA">0</p>
-  </div>
+        <!-- 난이도 선택 -->
+        <div class="screen" id="difficultyScreen">
+            <h1 class="main-title">난이도 선택</h1>
+            <p class="subtitle">어려운 정도를 골라보세요</p>
+            
+            <div class="card">
+                <button class="btn btn-option" onclick="selectDifficulty('easy')" style="margin-bottom: 16px;">
+                    <span style="font-size: 1.5rem; margin-right: 12px;">🌱</span>
+                    <div style="display: inline-block; vertical-align: middle;">
+                        <div style="font-weight: 700;">쉬움</div>
+                        <div style="font-size: 0.9rem; color: #666; font-weight: normal;">5~6세용 쉬운 문제</div>
+                    </div>
+                </button>
+                
+                <button class="btn btn-option" onclick="selectDifficulty('normal')" style="margin-bottom: 16px;">
+                    <span style="font-size: 1.5rem; margin-right: 12px;">🌿</span>
+                    <div style="display: inline-block; vertical-align: middle;">
+                        <div style="font-weight: 700;">보통</div>
+                        <div style="font-size: 0.9rem; color: #666; font-weight: normal;">7~8세용 문제</div>
+                    </div>
+                </button>
+                
+                <button class="btn btn-option" onclick="selectDifficulty('hard')">
+                    <span style="font-size: 1.5rem; margin-right: 12px;">🌳</span>
+                    <div style="display: inline-block; vertical-align: middle;">
+                        <div style="font-weight: 700;">어려움</div>
+                        <div style="font-size: 0.9rem; color: #666; font-weight: normal;">9세 이상 + 부모용</div>
+                    </div>
+                </button>
+            </div>
+        </div>
 
-  <div class="player">
-    <img src="mama.jpg" alt="Mama">
-    <p>Mama</p>
-    <p class="score" id="scoreM">0</p>
-  </div>
-</div>
+        <!-- 카테고리 선택 -->
+        <div class="screen" id="categoryScreen">
+            <h1 class="main-title">카테고리 선택</h1>
+            <p class="subtitle">퀴즈 주제를 골라보세요</p>
+            
+            <div class="select-grid">
+                <div class="select-card" onclick="selectCategory('animal')">
+                    <div class="select-emoji">🐰</div>
+                    <div class="select-label">동물</div>
+                </div>
+                <div class="select-card" onclick="selectCategory('nature')">
+                    <div class="select-emoji">🌸</div>
+                    <div class="select-label">자연</div>
+                </div>
+                <div class="select-card" onclick="selectCategory('environment')">
+                    <div class="select-emoji">🌍</div>
+                    <div class="select-label">환경</div>
+                </div>
+                <div class="select-card" onclick="selectCategory('general')">
+                    <div class="select-emoji">💡</div>
+                    <div class="select-label">상식</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="selectCategory('all')">
+                    🎲 모든 카테고리 (랜덤)
+                </button>
+            </div>
+        </div>
 
-<p id="turn">👧 Tour : Anessa</p>
+        <!-- 게임 화면 -->
+        <div class="screen" id="gameScreen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            
+            <div class="players-status">
+                <div class="player-box" id="anessaBox">
+                    <div class="player-avatar">👧</div>
+                    <div class="player-name">안네사</div>
+                    <div class="player-score" id="anessaScore">0</div>
+                </div>
+                <div class="player-box" id="mamaBox">
+                    <div class="player-avatar">👩</div>
+                    <div class="player-name">마마</div>
+                    <div class="player-score" id="mamaScore">0</div>
+                </div>
+            </div>
+            
+            <div class="turn-indicator" id="turnIndicator">
+                👧 안네사 차례예요!
+            </div>
+            
+            <div class="question-area">
+                <div>
+                    <span class="category-tag" id="qCategory">동물</span>
+                    <span class="difficulty-tag" id="qDifficulty">쉬움</span>
+                </div>
+                
+                <div class="question-text" id="qText">
+                    문제가 여기에 표시됩니다
+                </div>
+                
+                <img class="question-image" id="qImage" style="display: none;" alt="문제 이미지">
+                
+                <div id="optionsContainer"></div>
+                
+                <div class="explanation-box" id="explanationBox">
+                    <div class="explanation-title">📖 해설</div>
+                    <div class="explanation-text" id="explanationText"></div>
+                    <button class="btn btn-primary next-btn" id="nextBtn" onclick="nextQuestion()">
+                        다음 문제 →
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<div class="question" id="question">
-🐨 Le koala mange quoi ?
-</div>
+        <!-- 결과 화면 -->
+        <div class="screen" id="resultScreen">
+            <h1 class="result-title">🎉 게임 끝! 🎉</h1>
+            
+            <div class="winner-display">
+                <div class="winner-emoji" id="winnerEmoji">🏆</div>
+                <div class="winner-text" id="winnerText">안네사 승리!</div>
+                <div style="color: #666; font-size: 1.1rem;">축하해요! 정말 잘했어요 👏</div>
+                
+                <div class="final-scores">
+                    <div class="final-score-box">
+                        <div class="final-score-label">👧 안네사</div>
+                        <div class="final-score-value" id="finalAnessa">0</div>
+                    </div>
+                    <div class="final-score-box">
+                        <div class="final-score-label">👩 마마</div>
+                        <div class="final-score-value" id="finalMama">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="resetGame()">
+                🔄 다시 하기
+            </button>
+            <button class="btn btn-secondary" onclick="showScreen('startScreen')" style="margin-top: 12px;">
+                🏠 처음으로
+            </button>
+        </div>
+    </div>
 
-<button class="correct" onclick="answer(true)">Des feuilles d’eucalyptus</button>
-<button class="wrong" onclick="answer(false)">Des fruits</button>
+    <script>
+        // 게임 상태
+        const gameState = {
+            currentPlayer: 'anessa',
+            anessaScore: 0,
+            mamaScore: 0,
+            currentQuestion: 0,
+            totalQuestions: 10,
+            selectedDifficulty: 'easy',
+            selectedCategory: 'all',
+            questions: [],
+            voiceEnabled: true,
+            answered: false
+        };
 
-<div class="explanation" id="explanation" style="display:none;"></div>
+        // 문제 데이터베이스 (30개 이상)
+        const questionDatabase = [
+            // 동물 - 쉬움
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '고양이가 좋아하는 음식은 무엇일까요?',
+                options: ['생선', '사과'],
+                correct: 0,
+                explanation: '고양이는 생선을 정말 좋아해요! 단, 우리 집 고양이에게 줄 때는 가시가 없는 부분만 주어야 해요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '개는 어떤 소리를 낼까요?',
+                options: ['야옹', '멍멍'],
+                correct: 1,
+                explanation: '개는 "멍멍"하고 짖어요. 꼬리를 흔들면 기분이 좋다는 뜻이에요!'
+            },
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '새는 어디에 살아요?',
+                options: ['물속', '하늘/나무'],
+                correct: 1,
+                explanation: '새는 하늘을 날고, 나무에 집을 지어서 살아요. 새집을 본 적 있나요?'
+            },
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '코끼리는 어떤 소리로 대화할까요?',
+                options: ['날카로운 소리', '코를 이용한 소리'],
+                correct: 1,
+                explanation: '코끼리는 코(긴 코)를 이용해서 "뿌우" 하고 소리를 내요. 멀리 있는 코끼리와도 대화할 수 있어요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '곰은 겨울에 무엇을 하나요?',
+                options: ['동면(잠)', '남쪽으로 이동'],
+                correct: 0,
+                explanation: '곰은 겨울에 동면을 해요. 가을에 많이 먹고 겨울 동안 잠을 자면서 보내요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '토끼가 좋아하는 음식은?',
+                options: ['당근', '고기'],
+                correct: 0,
+                explanation: '토끼는 당근과 채소를 좋아해요. 토끼는 풀을 먹는 초식동물이에요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '물속에서 사는 동물은?',
+                options: ['돌고래', '사자'],
+                correct: 0,
+                explanation: '돌고래는 바다에서 살아요. 똑똑해서 사람과 친구가 되기도 해요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'easy',
+                question: '벌은 무엇을 만들어요?',
+                options: ['꿀', '우유'],
+                correct: 0,
+                explanation: '벌은 꽃에서 꿀을 모아서 달콤한 꿀을 만들어요. 꿀은 건강에도 좋아요!'
+            },
 
-<script>
-let turn = "A";
-let scoreA = 0;
-let scoreM = 0;
+            // 동물 - 보통
+            {
+                category: 'animal',
+                difficulty: 'normal',
+                question: '펭귄은 어디에 살아요?',
+                options: ['북극', '남극'],
+                correct: 1,
+                explanation: '펭귄은 남극에 살아요. 북극에는 펭귄이 없어요! 추운 곳에서도 따뜻하게 지내요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'normal',
+                question: '캥거루는 어떻게 이동하나요?',
+                options: ['뛰어서', '날아서'],
+                correct: 0,
+                explanation: '캥거루는 뒷다리로 "펄쩍펄쩍" 뛰어서 이동해요. 주머니에 아기 캥거루를 넣고 다녀요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'normal',
+                question: '올빼미는 주로 언제 활동할까요?',
+                options: ['낮', '밤'],
+                correct: 1,
+                explanation: '올빼미는 밤에 활동해요. 눈이 밝아서 어두운 곳도 잘 볼 수 있어요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'normal',
+                question: '카멜레온은 무엇을 바꿀 수 있나요?',
+                options: ['몸 색깔', '몸 크기'],
+                correct: 0,
+                explanation: '카멜레온은 몸 색깔을 바꿀 수 있어요. 주변 색깔과 똑같이 변해서 숨을 수 있어요.'
+            },
 
-function answer(correct) {
-  let explanation = document.getElementById("explanation");
-  explanation.style.display = "block";
+            // 동물 - 어려움
+            {
+                category: 'animal',
+                difficulty: 'hard',
+                question: '문어는 심장이 몇 개일까요?',
+                options: ['1개', '3개'],
+                correct: 1,
+                explanation: '문어는 심장이 3개예요! 피는 파란색이고, 머리가 9개나 있어서 똑똑해요.'
+            },
+            {
+                category: 'animal',
+                difficulty: 'hard',
+                question: '가장 빠른 육상 동물은?',
+                options: ['사자', '치타'],
+                correct: 1,
+                explanation: '치타는 시속 110km로 달릴 수 있어요! 자동차만큼 빠르지만 멀리는 못 가요.'
+            },
 
-  if (correct) {
-    if (turn === "A") {
-      scoreA++;
-      document.getElementById("scoreA").innerText = scoreA;
-    } else {
-      scoreM++;
-      document.getElementById("scoreM").innerText = scoreM;
-    }
+            // 자연 - 쉬움
+            {
+                category: 'nature',
+                difficulty: 'easy',
+                question: '무지개는 몇 가지 색이 있나요?',
+                options: ['3가지', '7가지'],
+                correct: 1,
+                explanation: '무지개는 빨주노초파남보 7가지 색이 있어요. 비 온 후 햇빛을 보면 볼 수 있어요.'
+            },
+            {
+                category: 'nature',
+                difficulty: 'easy',
+                question: '나무는 무엇을 만들어주나요?',
+                options: ['산소', '쓰레기'],
+                correct: 0,
+                explanation: '나무는 우리가 숨쉴 수 있는 산소를 만들어줘요. 그래서 나무를 많이 심어야 해요!'
+            },
+            {
+                category: 'nature',
+                difficulty: 'easy',
+                question: '봄에 피는 꽃은?',
+                options: ['벚꽃', '코스모스'],
+                correct: 0,
+                explanation: '벚꽃은 봄에 피어요. 분홍색 꽃잎이 예쁘게 날려요.'
+            },
+            {
+                category: 'nature',
+                difficulty: 'easy',
+                question: '하늘은 왜 파란색일까요?',
+                options: ['물감으로 칠했어서', '빛의 산란 때문'],
+                correct: 1,
+                explanation: '햇빛이 하늘의 작은 먼지와 부딪히면 파란 빛이 퍼져요. 그래서 하늘이 파랗게 보여요.'
+            },
 
-    explanation.innerHTML = `
-    ✅ Bonne réponse !<br><br>
-    🇰🇷 코알라는 유칼립투스 잎만 먹어요.
-    이 잎은 독성이 있지만 코알라는 소화할 수 있어요.
-    `;
-  } else {
-    explanation.innerHTML = `
-    ❌ Mauvaise réponse.<br><br>
-    🇰🇷 코알라는 과일을 먹지 않아요.
-    유칼립투스 잎만 먹는 특별한 동물이에요.
-    `;
-  }
+            // 자연 - 보통
+            {
+                category: 'nature',
+                difficulty: 'normal',
+                question: '번개와 천둥, 뭐가 먼저일까요?',
+                options: ['번개', '천둥'],
+                correct: 0,
+                explanation: '번개와 천둥은 같이 일어나지만, 빛이 소리보다 빨라서 번개를 먼저 봐요!'
+            },
+            {
+                category: 'nature',
+                difficulty: 'normal',
+                question: '지구에서 가장 높은 산은?',
+                options: ['백두산', '에베레스트산'],
+                correct: 1,
+                explanation: '에베레스트산이 가장 높아요. 높이가 8,848미터나 돼요! 정말 높죠?'
+            },
+            {
+                category: 'nature',
+                difficulty: 'normal',
+                question: '바다는 왜 짤까요?',
+                options: ['소금이 많아서', '설탕이 많아서'],
+                correct: 0,
+                explanation: '바다에는 땅에서 흘러온 소금이 모여있어요. 바닷물을 마시면 더 목이 말라요!'
+            },
 
-  // Change turn
-  turn = (turn === "A") ? "M" : "A";
-  document.getElementById("turn").innerText =
-    turn === "A" ? "👧 Tour : Anessa" : "👩 Tour : Mama";
-}
-</script>
+            // 자연 - 어려움
+            {
+                category: 'nature',
+                difficulty: 'hard',
+                question: '지구의 나이는 약 몇 살일까요?',
+                options: ['45억 년', '4500만 년'],
+                correct: 0,
+                explanation: '지구는 약 45억 년 되었어요! 공룡은 2억 년 전에 살았어요. 정말 오래되었죠?'
+            },
 
+            // 환경 - 쉬움
+            {
+                category: 'environment',
+                difficulty: 'easy',
+                question: '쓰레기는 어디에 버려야 하나요?',
+                options: ['바다에', '쓰레기통에'],
+                correct: 1,
+                explanation: '쓰레기는 쓰레기통에 버려야 해요. 분리수거도 잘하면 지구가 깨끗해져요!'
+            },
+            {
+                category: 'environment',
+                difficulty: 'easy',
+                question: '물을 아끼는 방법은?',
+                options: ['수도꼭지를 꼭 닫기', '계속 틀어놓기'],
+                correct: 0,
+                explanation: '양치할 때 수도꼭지를 꼭 닫아야 해요. 물은 소중하니까 아껴 써야 해요!'
+            },
+            {
+                category: 'environment',
+                difficulty: 'easy',
+                question: '종이는 어떻게 만들어요?',
+                options: ['나무로', '플라스틱으로'],
+                correct: 0,
+                explanation: '종이는 나무로 만들어요. 그래서 종이를 아끼고 재활용하면 나무를 살릴 수 있어요!'
+            },
+
+            // 환경 - 보통
+            {
+                category: 'environment',
+                difficulty: 'normal',
+                question: '플라스틱은 얼마나 오래 남아있을까요?',
+                options: ['1년', '500년 이상'],
+                correct: 1,
+                explanation: '플라스틱은 500년 이상 안 없어져요! 그래서 덜 쓰고 재활용이 중요해요.'
+            },
+            {
+                category: 'environment',
+                difficulty: 'normal',
+                question: '지구를 지키는 에너지는?',
+                options: ['태양광', '석유'],
+                correct: 0,
+                explanation: '태양광은 깨끗한 에너지예요. 태양은 끝없이 빛을 주니까 안전해요!'
+            },
+
+            // 환경 - 어려움
+            {
+                category: 'environment',
+                difficulty: 'hard',
+                question: '지구 온난화의 주된 원인은?',
+                options: ['이산화탄소', '산소'],
+                correct: 0,
+                explanation: '이산화탄소가 많아지면 지구가 따뜻해져요. 나무를 심으면 이산화탄소를 줄일 수 있어요.'
+            },
+
+            // 상식 - 쉬움
+            {
+                category: 'general',
+                difficulty: 'easy',
+                question: '아침에 일어나면 뭐를 해야 하나요?',
+                options: ['이를 닦기', '바로 밥 먹기'],
+                correct: 0,
+                explanation: '아침에 일어나면 이를 닦아야 해요. 그래야 충치도 안 생기고 입이 상쾌해요!'
+            },
+            {
+                category: 'general',
+                difficulty: 'easy',
+                question: '손을 씻을 때는?',
+                options: ['물만 댕기기', '비누로 꼼꼼히'],
+                correct: 1,
+                explanation: '비누로 30초 이상 꼼꼼히 씻어야 세균이 죽어요. 손가락 사이도 잘 씻어야 해요!'
+            },
+            {
+                category: 'general',
+                difficulty: 'easy',
+                question: '책을 읽을 때는?',
+                options: ['밝은 곳에서', '어두운 곳에서'],
+                correct: 0,
+                explanation: '밝은 곳에서 책을 읽어야 눈이 안 아파요. 자세도 바르게 앉아야 해요!'
+            },
+
+            // 상식 - 보통
+            {
+                category: 'general',
+                difficulty: 'normal',
+                question: '소화가 잘되려면?',
+                options: ['천천히 씹기', '빨리 삼키기'],
+                correct: 0,
+                explanation: '음식을 천천히 꼭꼭 씹어야 소화가 잘돼요. 한 입에 30번 이상 씹어보세요!'
+            },
+            {
+                category: 'general',
+                difficulty: 'normal',
+                question: '잠자리에 들기 전에?',
+                options: ['이 닦기', '사탕 먹기'],
+                correct: 0,
+                explanation: '자기 전에 이를 닦아야 해요. 자는 동안 세균이 썩어서 충치가 생겨요.'
+            },
+
+            // 상식 - 어려움
+            {
+                category: 'general',
+                difficulty: 'hard',
+                question: '우리 몸에서 가장 큰 장기는?',
+                options: ['심장', '피부'],
+                correct: 1,
+                explanation: '피부가 가장 큰 장기예요! 몸 전체를 덮고 있어요. 피부를 소중히 해야 해요.'
+            }
+        ];
+
+        // 음성 합성
+        const speechSynthesis = window.speechSynthesis;
+        let speechVoice = null;
+
+        function loadVoice() {
+            const voices = speechSynthesis.getVoices();
+            speechVoice = voices.find(v => v.lang.includes('ko')) || voices[0];
+        }
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoice;
+        }
+        loadVoice();
+
+        function speak(text) {
+            if (!gameState.voiceEnabled || !speechSynthesis) return;
+            
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ko-KR';
+            utterance.rate = 0.9;
+            utterance.pitch = 1.1;
+            if (speechVoice) utterance.voice = speechVoice;
+            speechSynthesis.speak(utterance);
+        }
+
+        function toggleVoice() {
+            gameState.voiceEnabled = !gameState.voiceEnabled;
+            const btn = document.getElementById('voiceBtn');
+            btn.textContent = gameState.voiceEnabled ? '🔊' : '🔇';
+            btn.classList.toggle('off', !gameState.voiceEnabled);
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function selectDifficulty(difficulty) {
+            gameState.selectedDifficulty = difficulty;
+            showScreen('categoryScreen');
+        }
+
+        function selectCategory(category) {
+            gameState.selectedCategory = category;
+            prepareQuestions();
+            showScreen('gameScreen');
+            initGame();
+        }
+
+        function prepareQuestions() {
+            let filtered = questionDatabase.filter(q => {
+                const matchDiff = q.difficulty === gameState.selectedDifficulty;
+                const matchCat = gameState.selectedCategory === 'all' || q.category === gameState.selectedCategory;
+                return matchDiff && matchCat;
+            });
+
+            if (filtered.length < gameState.totalQuestions) {
+                const extra = questionDatabase.filter(q => {
+                    const matchCat = gameState.selectedCategory === 'all' || q.category === gameState.selectedCategory;
+                    return matchCat && !filtered.includes(q);
+                });
+                filtered = filtered.concat(extra);
+            }
+
+            filtered.sort(() => Math.random() - 0.5);
+            gameState.questions = filtered.slice(0, gameState.totalQuestions);
+        }
+
+        function initGame() {
+            gameState.currentPlayer = 'anessa';
+            gameState.anessaScore = 0;
+            gameState.mamaScore = 0;
+            gameState.currentQuestion = 0;
+            gameState.answered = false;
+            
+            updateScoreDisplay();
+            updateTurnDisplay();
+            loadQuestion();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('anessaScore').textContent = gameState.anessaScore;
+            document.getElementById('mamaScore').textContent = gameState.mamaScore;
+        }
+
+        function updateTurnDisplay() {
+            const anessaBox = document.getElementById('anessaBox');
+            const mamaBox = document.getElementById('mamaBox');
+            const indicator = document.getElementById('turnIndicator');
+            
+            if (gameState.currentPlayer === 'anessa') {
+                anessaBox.classList.add('active');
+                mamaBox.classList.remove('active');
+                indicator.textContent = '👧 안네사 차례예요!';
+                indicator.style.background = 'linear-gradient(90deg, #FF6B9D, #FF8E53)';
+            } else {
+                anessaBox.classList.remove('active');
+                mamaBox.classList.add('active');
+                indicator.textContent = '👩 마마 차례예요!';
+                indicator.style.background = 'linear-gradient(90deg, #667EEA, #764BA2)';
+            }
+        }
+
+        function loadQuestion() {
+            const q = gameState.questions[gameState.currentQuestion];
+            gameState.answered = false;
+            
+            const progress = ((gameState.currentQuestion) / gameState.totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            const catNames = { animal: '동물', nature: '자연', environment: '환경', general: '상식' };
+            document.getElementById('qCategory').textContent = catNames[q.category];
+            
+            const diffBadge = document.getElementById('qDifficulty');
+            const diffNames = { easy: '쉬움', normal: '보통', hard: '어려움' };
+            diffBadge.textContent = diffNames[q.difficulty];
+            diffBadge.className = 'difficulty-tag difficulty-' + q.difficulty;
+            
+            document.getElementById('qText').textContent = q.question;
+            document.getElementById('qImage').style.display = 'none';
+            
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-option';
+                btn.textContent = opt;
+                btn.onclick = () => selectAnswer(idx, btn);
+                container.appendChild(btn);
+            });
+            
+            document.getElementById('explanationBox').classList.remove('show');
+            document.getElementById('nextBtn').classList.remove('show');
+            
+            setTimeout(() => speak(q.question), 500);
+        }
+
+        function selectAnswer(index, btnElement) {
+            if (gameState.answered) return;
+            gameState.answered = true;
+            
+            const q = gameState.questions[gameState.currentQuestion];
+            const isCorrect = index === q.correct;
+            const buttons = document.querySelectorAll('.btn-option');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.add('disabled');
+                if (idx === q.correct) {
+                    btn.classList.add('correct');
+                } else if (idx === index && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+            
+            if (isCorrect) {
+                if (gameState.currentPlayer === 'anessa') {
+                    gameState.anessaScore += 10;
+                } else {
+                    gameState.mamaScore += 10;
+                }
+                updateScoreDisplay();
+                speak('정답이에요!');
+            } else {
+                speak('아쉽지만 틀렸어요. 정답은 ' + q.options[q.correct] + '예요.');
+            }
+            
+            document.getElementById('explanationText').textContent = q.explanation;
+            document.getElementById('explanationBox').classList.add('show');
+            document.getElementById('nextBtn').classList.add('show');
+            
+            setTimeout(() => speak(q.explanation), 1000);
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestion++;
+            
+            if (gameState.currentQuestion >= gameState.totalQuestions) {
+                showResult();
+                return;
+            }
+            
+            gameState.currentPlayer = gameState.currentPlayer === 'anessa' ? 'mama' : 'anessa';
+            updateTurnDisplay();
+            loadQuestion();
+        }
+
+        function showResult() {
+            showScreen('resultScreen');
+            
+            const anessa = gameState.anessaScore;
+            const mama = gameState.mamaScore;
+            
+            document.getElementById('finalAnessa').textContent = anessa;
+            document.getElementById('finalMama').textContent = mama;
+            
+            const winnerEmoji = document.getElementById('winnerEmoji');
+            const winnerText = document.getElementById('winnerText');
+            
+            if (anessa > mama) {
+                winnerEmoji.textContent = '👧🏆';
+                winnerText.textContent = '안네사 승리!';
+                speak('축하해요! 안네사가 이겼어요!');
+            } else if (mama > anessa) {
+                winnerEmoji.textContent = '👩🏆';
+                winnerText.textContent = '마마 승리!';
+                speak('축하해요! 마마가 이겼어요!');
+            } else {
+                winnerEmoji.textContent = '🤝';
+                winnerText.textContent = '무승부!';
+                speak('비겼어요! 둘 다 잘했어요!');
+            }
+        }
+
+        function resetGame() {
+            showScreen('difficultyScreen');
+        }
+
+        window.onload = () => {
+            document.addEventListener('touchstart', () => {}, { passive: true });
+        };
+    </script>
 </body>
 </html>
