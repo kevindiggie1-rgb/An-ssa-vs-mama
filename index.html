@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Anessa vs Mama</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f7ff;
+  text-align: center;
+  padding: 20px;
+}
+h1 { color: #333; }
+
+.players {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px 0;
+}
+
+.player {
+  background: white;
+  padding: 10px;
+  border-radius: 15px;
+  width: 140px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.player img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.score {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.question {
+  font-size: 22px;
+  margin: 20px 0;
+}
+
+button {
+  padding: 12px 20px;
+  margin: 10px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.correct { background: #4CAF50; color: white; }
+.wrong { background: #f44336; color: white; }
+
+.explanation {
+  margin-top: 15px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎮 Anessa vs Mama</h1>
+
+<div class="players">
+  <div class="player">
+    <img src="anessa.jpg" alt="Anessa">
+    <p>Anessa</p>
+    <p class="score" id="scoreA">0</p>
+  </div>
+
+  <div class="player">
+    <img src="mama.jpg" alt="Mama">
+    <p>Mama</p>
+    <p class="score" id="scoreM">0</p>
+  </div>
+</div>
+
+<p id="turn">👧 Tour : Anessa</p>
+
+<div class="question" id="question">
+🐨 Le koala mange quoi ?
+</div>
+
+<button class="correct" onclick="answer(true)">Des feuilles d’eucalyptus</button>
+<button class="wrong" onclick="answer(false)">Des fruits</button>
+
+<div class="explanation" id="explanation" style="display:none;"></div>
+
+<script>
+let turn = "A";
+let scoreA = 0;
+let scoreM = 0;
+
+function answer(correct) {
+  let explanation = document.getElementById("explanation");
+  explanation.style.display = "block";
+
+  if (correct) {
+    if (turn === "A") {
+      scoreA++;
+      document.getElementById("scoreA").innerText = scoreA;
+    } else {
+      scoreM++;
+      document.getElementById("scoreM").innerText = scoreM;
+    }
+
+    explanation.innerHTML = `
+    ✅ Bonne réponse !<br><br>
+    🇰🇷 코알라는 유칼립투스 잎만 먹어요.
+    이 잎은 독성이 있지만 코알라는 소화할 수 있어요.
+    `;
+  } else {
+    explanation.innerHTML = `
+    ❌ Mauvaise réponse.<br><br>
+    🇰🇷 코알라는 과일을 먹지 않아요.
+    유칼립투스 잎만 먹는 특별한 동물이에요.
+    `;
+  }
+
+  // Change turn
+  turn = (turn === "A") ? "M" : "A";
+  document.getElementById("turn").innerText =
+    turn === "A" ? "👧 Tour : Anessa" : "👩 Tour : Mama";
+}
+</script>
+
+</body>
+</html>
